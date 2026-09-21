@@ -50,6 +50,10 @@ public final class Ui {
     public static final Color BORDER = new Color(219, 226, 240);
     public static final Color FIELD_BG = new Color(246, 248, 252);
 
+    // ---- Simbol aman (render di semua sistem) ----
+    public static final String BULLET = "\u2022";
+    public static final String CHECK = "\u2713";
+
     // ---- Tipografi ----
     public static final Font FONT_APP = new Font("Segoe UI", Font.PLAIN, 14);
     public static final Font FONT_TITLE = new Font("Segoe UI", Font.BOLD, 26);
@@ -96,11 +100,17 @@ public final class Ui {
     public static class CardPanel extends JPanel {
         private int radius;
         private Color borderColor;
+        private Color fill;
         private boolean hover;
 
         public CardPanel(int radius, Color borderColor) {
+            this(radius, borderColor, CARD_BG);
+        }
+
+        public CardPanel(int radius, Color borderColor, Color fill) {
             this.radius = radius;
             this.borderColor = borderColor;
+            this.fill = fill;
             setOpaque(false);
             if (borderColor != null) {
                 setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
@@ -129,7 +139,7 @@ public final class Ui {
                 g2.fillRoundRect(i, i + 3, w - i * 2 - 1, h - i * 2 - 4, radius, radius);
             }
 
-            g2.setColor(CARD_BG);
+            g2.setColor(fill);
             g2.fillRoundRect(1, 1, w - 2, h - 2, radius, radius);
 
             Color bc = this.borderColor;
@@ -323,6 +333,20 @@ public final class Ui {
             g2.dispose();
             super.paintComponent(g);
         }
+    }
+
+    /** Label HTML dengan lebar terkunci (mencegah bocor/render overflow). */
+    public static JLabel htmlLabel(String html, Font font, Color fg, int width, int alignment) {
+        JLabel lbl = new JLabel(html);
+        lbl.setUI(new javax.swing.plaf.basic.BasicLabelUI());
+        lbl.setFont(font);
+        lbl.setForeground(fg);
+        lbl.setOpaque(false);
+        lbl.setHorizontalAlignment(alignment);
+        Dimension d = lbl.getPreferredSize();
+        lbl.setPreferredSize(new Dimension(width, Math.max(d.height, 22)));
+        lbl.setMaximumSize(new Dimension(width, Math.max(d.height, 22)));
+        return lbl;
     }
 
     public static void styleField(final JTextField f) {
